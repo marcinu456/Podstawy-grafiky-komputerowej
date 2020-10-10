@@ -54,7 +54,7 @@ int main( void )
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
 	// Dark blue background
-	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+	glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
 
 	GLuint VertexArrayID;
 	glGenVertexArrays(1, &VertexArrayID);
@@ -65,9 +65,17 @@ int main( void )
 
 
 	static const GLfloat g_vertex_buffer_data[] = { 
-		-1.0f, -1.0f, 0.0f,
-		 1.0f, -1.0f, 0.0f,
-		 0.0f,  1.0f, 0.0f,
+		-0.3f, 0.4f, 0.0f,
+		 0.3f, 0.4f, 0.0f,
+		 0.0f,  .9f, 0.0f,
+
+		-0.3f, -0.1f, 0.0f,
+		 0.3f, -0.1f, 0.0f,
+		 0.0f,  0.4f, 0.0f,
+
+		 -0.3f, -0.6f, 0.0f,
+		 0.3f, -0.6f, 0.0f,
+		 0.0f,  -0.1f, 0.0f,
 	};
 
 	GLuint vertexbuffer;
@@ -96,8 +104,9 @@ int main( void )
 		);
 
 		// Draw the triangle !
-		glDrawArrays(GL_TRIANGLES, 0, 3); // 3 indices starting at 0 -> 1 triangle
-
+		glDrawArrays(GL_TRIANGLES, 0, 9); // 3 indices starting at 0 -> 1 triangle
+	//	glDrawArrays(GL_TRIANGLES, 3, 3); // 3 indices starting at 0 -> 1 triangle
+	//	glDrawArrays(GL_TRIANGLES, 6, 3); // 3 indices starting at 0 -> 1 triangle
 		glDisableVertexAttribArray(0);
 
 		// Swap buffers
