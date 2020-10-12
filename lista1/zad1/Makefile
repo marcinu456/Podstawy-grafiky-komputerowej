@@ -1,4 +1,4 @@
-default: choinka
+default: choinka.out
 
 %: %.cpp
 	g++ -I. $< -o $@ common/shader.cpp -lGLEW  -lGL -lglfw 
