@@ -28,19 +28,12 @@ public:
          #version 330 
          out vec4 vcolor;
          void main(void) {
-            const vec2 vertices[6] = vec2[6](vec2( 0.9, -0.9),
-                                             vec2(0.0, 0.0),
-                                             vec2( 0.9,  0.9),
-											vec2( 0.9, -0.9),
-											 vec2(-0.9, -0.9),
-											 vec2( 0.0,  0.0)
-);
-            const vec4 colors[]    = vec4[6](vec4(1.0, 0.0, 0.0, 1.0),
-                                             vec4(1.0, 1.0, 1.0, 1.0),
-                                             vec4(0.0, 0.0, 1.0, 1.0),
-											 vec4(1.0, 0.0, 0.0, 1.0),
+            const vec2 vertices[3] = vec2[3](vec2( 0.9, -0.9),
+                                             vec2(-0.9, -0.9),
+                                             vec2( 0.9,  0.9));
+            const vec4 colors[]    = vec4[3](vec4(1.0, 0.0, 0.0, 1.0),
                                              vec4(0.0, 1.0, 0.0, 1.0),
-                                             vec4(1.0, 1.0, 1.0, 1.0));
+                                             vec4(0.0, 0.0, 1.0, 1.0));
 
             vcolor      = colors[gl_VertexID];
             gl_Position = vec4(vertices[gl_VertexID], 0.5, 1.0); 
@@ -49,18 +42,27 @@ public:
       )END", R"END(
 
          #version 330 
+		  in  vec2 vpos;
          in  vec4 vcolor;
          out vec4 color;
 
+
+
          void main(void) {
-            color = vcolor;
+          float r = vpos.x * vpos.x + vpos.y * vpos.y;
+           if (r == 0.1) {
+              color = vec4(1.0, 1.0, 1.0, 0);
+            }
+            else {
+              color = vcolor;
+           }
          } 
 
       )END");
 	}
 	void draw() {
 		bindProgram();
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 3);
 	}
 };
 
@@ -210,7 +212,7 @@ public:
 		glUniform2f(1, tx, ty);  // center in vertex shader
 		glUniform3f(3, cross_color[0], cross_color[1], cross_color[2]);
 
-		glDrawArrays(GL_LINES, 0, N);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, N);
 	}
 	void setColor(float r, float g, float b) {
 		cross_color[0] = r; cross_color[1] = g; cross_color[2] = b;

@@ -1,9 +1,9 @@
 ﻿  Using triplet "x86-windows" from "C:\vcpkg\installed\x86-windows\"
   AGL3-example.cpp
-D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista2\files\AGL3-example.cpp(277,14): warning C4305: "+=": obcięcie z "double" do "float"
-D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista2\files\AGL3-example.cpp(280,14): warning C4305: "-=": obcięcie z "double" do "float"
-D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista2\files\AGL3-example.cpp(283,14): warning C4305: "+=": obcięcie z "double" do "float"
-D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista2\files\AGL3-example.cpp(286,14): warning C4305: "-=": obcięcie z "double" do "float"
-D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista2\files\AGL3-example.cpp(289,14): warning C4305: "+=": obcięcie z "double" do "float"
-D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista2\files\AGL3-example.cpp(292,14): warning C4305: "-=": obcięcie z "double" do "float"
+D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista2\files\AGL3-example.cpp(279,14): warning C4305: "+=": obcięcie z "double" do "float"
+D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista2\files\AGL3-example.cpp(282,14): warning C4305: "-=": obcięcie z "double" do "float"
+D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista2\files\AGL3-example.cpp(285,14): warning C4305: "+=": obcięcie z "double" do "float"
+D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista2\files\AGL3-example.cpp(288,14): warning C4305: "-=": obcięcie z "double" do "float"
+D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista2\files\AGL3-example.cpp(291,14): warning C4305: "+=": obcięcie z "double" do "float"
+D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista2\files\AGL3-example.cpp(294,14): warning C4305: "-=": obcięcie z "double" do "float"
   Lista2.vcxproj -> D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Debug\Lista2.exe
