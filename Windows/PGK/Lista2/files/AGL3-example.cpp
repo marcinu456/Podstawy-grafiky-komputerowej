@@ -27,6 +27,7 @@ public:
 
          #version 330 
          out vec4 vcolor;
+		 out  vec2 vpos;
          void main(void) {
             const vec2 vertices[3] = vec2[3](vec2( 0.9, -0.9),
                                              vec2(-0.9, -0.9),
@@ -36,6 +37,7 @@ public:
                                              vec4(0.0, 0.0, 1.0, 1.0));
 
             vcolor      = colors[gl_VertexID];
+			vpos = vertices[gl_VertexID];
             gl_Position = vec4(vertices[gl_VertexID], 0.5, 1.0); 
          }
 
@@ -46,11 +48,9 @@ public:
          in  vec4 vcolor;
          out vec4 color;
 
-
-
          void main(void) {
           float r = vpos.x * vpos.x + vpos.y * vpos.y;
-           if (r == 0.1) {
+           if (r < 0.01) {
               color = vec4(1.0, 1.0, 1.0, 0);
             }
             else {
@@ -147,7 +147,7 @@ private:
 class MyCircle : public AGLDrawable {
 public:
 
-	int N=10;
+	int N=16;
 
 	MyCircle() : AGLDrawable(0) {
 		setShaders();
@@ -253,7 +253,7 @@ void MyWin::MainLoop() {
 	MyCross cross;
 	MyTri   trian;
 	MyCircle circle;
-	circle.N = 30; // TODO change this later
+	circle.N = 60;
 	float   tx = 0.0, ty = 0.5, cx = 0.0, cy = 0.0;
 	do {
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -302,8 +302,10 @@ void MyWin::MainLoop() {
 		bool collisionY = cy + scale >= ty && ty + scale >= cy;
 		// collision only if on both axes
 		
-		if (collisionX&& collisionY)
+		if (collisionX && collisionY) {
 			std::cout << "colid \n";
+			break;
+		}
 		else
 			std::cout << "cross " << tx << " | " << ty << " circle" << cx << " " << cy << "\n";
 
@@ -317,66 +319,3 @@ int main(int argc, char* argv[]) {
 	win.MainLoop();
 	return 0;
 }
-
-/*
-			const vec2 vertices[6] = vec2[6](vec2( 0.9, -0.9),
-											 vec2(-0.9, -0.9),
-											 vec2( 0.9,  0.9),
-											 vec2( 0.9, -0.9),
-											 vec2(-0.9, -0.9),
-											 vec2( 0.9,  0.9));
-			const vec4 colors[]    = vec4[6](vec4(1.0, 0.0, 0.0, 1.0),
-											 vec4(0.0, 1.0, 0.0, 1.0),
-											 vec4(0.0, 0.0, 1.0, 1.0),
-											 vec4(0.0, 0.0, 1.0, 0.0),
-											 vec4(0.0, 1.0, 0.0, 0.0),
-											 vec4(1.0, 0.0, 0.0, 0.0));
-
-
-
-
-
-											 vec2( 0.9, -0.9),
-											 vec2(-0.9, -0.9),
-											 vec2( 0.0,  0.0),
-*/
-
-/*
-#version 330 core
-
-in vec3 fragment_color;
-
- in vec2 position;
-
- flat in int bg;
-
- out vec3  color;
-
-void main()
-
- {​​​​
-
-   int repeats = 10;
-
-   float offset = 0.1;
-
-  if(bg == 0) color = fragment_color;
-
-   else
-
-   {​​​​
-
-	 bool b = (int(-abs(position.y) * 1000) % 100 < int(abs(position.x) * 1000) % 100);
-
-	if(!b || position.y == 0)
-
-	   color = vec3(0.3, 0.0, 0.3);
-
-	 else
-
-	   color = vec3(0.1, 0.0, 0.1);
-
-   }​​​​
-
- }​​​​
- */

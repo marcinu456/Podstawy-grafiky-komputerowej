@@ -1,9 +1,5 @@
 ﻿  Using triplet "x86-windows" from "C:\vcpkg\installed\x86-windows\"
-  AGL3-example.cpp
-D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista2\files\AGL3-example.cpp(279,14): warning C4305: "+=": obcięcie z "double" do "float"
-D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista2\files\AGL3-example.cpp(282,14): warning C4305: "-=": obcięcie z "double" do "float"
-D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista2\files\AGL3-example.cpp(285,14): warning C4305: "+=": obcięcie z "double" do "float"
-D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista2\files\AGL3-example.cpp(288,14): warning C4305: "-=": obcięcie z "double" do "float"
-D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista2\files\AGL3-example.cpp(291,14): warning C4305: "+=": obcięcie z "double" do "float"
-D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista2\files\AGL3-example.cpp(294,14): warning C4305: "-=": obcięcie z "double" do "float"
+  AGL3Window.cpp
+D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista2\files\AGL3Window.cpp(54,35): warning C4244: "=": konwersja z "double" do "float", możliwa utrata danych
+D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista2\files\AGL3Window.cpp(55,40): warning C4244: "=": konwersja z "double" do "float", możliwa utrata danych
   Lista2.vcxproj -> D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Debug\Lista2.exe

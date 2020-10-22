@@ -5,12 +5,19 @@
 // ==========================================================================
 // AGLWindow.cpp
 //===========================================================================
+
 #include <stdlib.h>
-#include <io.h>
-#include <windows.h>
 #include <stdexcept>
 #include <iostream>
 #include <vector>
+
+#ifdef LINUX
+#include <unistd.h>
+#endif
+#ifdef WINDOWS
+#include <io.h>
+#include <windows.h>
+#endif
 
 using namespace std;
 
@@ -82,7 +89,12 @@ void AGLWindow::MainLoop(void) {
 void AGLWindow::WaitForFixedFPS(float frame_time) {
     double wait_time = frame_time - (glfwGetTime() - prev_time);
     if (wait_time > 0.0)
+#ifdef LINUX
+        usleep(1000000 * wait_time); //before swapBuf.. and time sync 60Hz..
+#endif
+#ifdef WINDOWS
         Sleep(1000000 * wait_time); //before swapBuf.. and time sync 60Hz..
+#endif
     prev_time = glfwGetTime();
 }
 
