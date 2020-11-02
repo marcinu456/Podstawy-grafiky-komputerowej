@@ -16,6 +16,38 @@
 #include "AGL3Window.hpp"
 
 
+float iloczyn_wektorowy(std::vector<float> X, std::vector<float> Y, std::vector<float> Z)
+{
+	float x1 = Z[0] - X[0], y1 = Z[1] - X[1],
+		x2 = Y[0] - X[0], y2 = Y[1] - X[1];
+	return x1 * y2 - x2 * y1;
+}
+//sprawdzenie, czy punkt Z(koniec odcinka pierwszego)
+//leży na odcinku XY
+bool sprawdz(std::vector<float> X, std::vector<float> Y, std::vector<float> Z)
+{
+	return std::min(X[0], Y[0]) <= Z[0] && Z[0] <= std::max(X[0], Y[0])
+		&& std::min(X[1], Y[1]) <= Z[1] && Z[1] <= std::max(X[1], Y[1]);
+}
+
+bool czy_przecinaja(std::vector<float> A, std::vector<float> B, std::vector<float> C, std::vector<float> D)
+{
+	float v1 = iloczyn_wektorowy(C, D, A),
+		v2 = iloczyn_wektorowy(C, D, B),
+		v3 = iloczyn_wektorowy(A, B, C),
+		v4 = iloczyn_wektorowy(A, B, D);
+
+	//sprawdzenie czy się przecinają - dla niedużych liczb
+	if(v1*v2 < 0 && v3*v4 < 0) return 1;
+
+	//sprawdzenie czy się przecinają - dla większych liczb
+	if ((v1 > 0 && v2 < 0 || v1 < 0 && v2>0) && (v3 > 0 && v4 < 0 || v3 < 0 && v4>0)) return 1;
+
+	//odcinki nie mają punktów wspólnych
+	return 0;
+}
+
+
 
 // ==========================================================================
 // Drawable object: no-data only: vertex/fragment programs
@@ -81,9 +113,14 @@ public:
 	float scale;
 	float color_begin[4];
 	float color_end[4];
+	std::vector<float> odcinek_begin;
+	std::vector<float> odcinek_end;
 
 	Lines(float rotate, float x ,float y, float scale	, float RB, float GB, float BB, float RE, float GE, float BE, float Alpha ) : AGLDrawable(0),
-		rotate(rotate), x(x), y(y), scale(scale), color_begin{ RB ,GB,BB,Alpha }, color_end{RE,GE,BE,Alpha}  {
+		rotate(rotate), x(x), y(y), scale(scale), color_begin{ RB ,GB,BB,Alpha }, color_end{ RE,GE,BE,Alpha } 
+		//odcinek_begin{(cos(rotate) * scale + x), (sin(rotate) * scale + y)  },
+		//odcinek_end{(-cos(rotate) * scale + x), (-sin(rotate) * scale + y)  }  
+	{
 			setShaders();
 	}
 	Lines():Lines(0,0,0,1,1,1,1,1,1,1,1) {
@@ -109,7 +146,6 @@ public:
                                              colorend);
 
             vcolor      = colors[gl_VertexID];
-
             gl_Position = vec4(vertices[gl_VertexID], 0.5, 1.0); 
          }
 
@@ -140,11 +176,21 @@ public:
 	}
 	void setColorBegin(float R,float G,float B, float A){
 		color_begin[0] = R; color_begin[1] = G; color_begin[2] = B; color_begin[3] = A;
+		odcinek_begin.push_back((cos(this->rotate) * this->scale + this->x));
+		odcinek_begin.push_back((sin(this->rotate) * this->scale + this->y));
+		odcinek_end.push_back((-cos(this->rotate) * this->scale + this->x));
+		odcinek_end.push_back((-sin(this->rotate) * this->scale + this->y));
 	}
 	void setColorEnd(float R, float G, float B, float A) {
 		color_end[0] = R; color_end[1] = G; color_end[2] = B; color_end[3] = A;
 	}
 
+	void updateplayercollision() {
+		odcinek_begin[0] = (cos(this->rotate) * this->scale + this->x);
+		odcinek_begin[1] = (sin(this->rotate) * this->scale + this->y);
+		odcinek_end[0] = (-cos(this->rotate) * this->scale + this->x);
+		odcinek_end[1] = (-sin(this->rotate) * this->scale + this->y);
+	}
 
 };
 
@@ -184,18 +230,17 @@ void MyWin::MainLoop() {
 	std::mt19937 rng(rd());
 	std::uniform_int_distribution<int> uni(0, INT_MAX);
 	ViewportOne(0, 0, wd, ht);
-
-	Lines lines[100];
-	for (int i = 1; i < 100; i++)
+	const int N = 10;
+	Lines lines[N * N];
+	for (int i = 1; i < N * N; i++)
 	{
 
 		float random_integer = uni(rng);
-		//lines[i] = { (float)(random_integer / INT_MAX) * 2 * PI,0.5,0.3,0,0,0,0,0,0,0,0 };
 		lines[i].rotate = (random_integer / INT_MAX) * 2 * PI;
-		lines[i].x = (i % 10)/5.f-.9f;
-		lines[i].y = (i / 10)/5.f-.9f;
-		lines[i].scale = .1;
-		if (i==99)//finish
+		lines[i].x = (i % N)/(N/2.f)-.9f;
+		lines[i].y = (i / N)/(N / 2.f)-.9f;
+		lines[i].scale = 1.f/N;
+		if (i== (N * N)-1)//finish naprawic
 		{
 			lines[i].setColorBegin(1, 1, 1, 1);
 			lines[i].setColorEnd(1, 0, 0, 1);
@@ -206,15 +251,20 @@ void MyWin::MainLoop() {
 			lines[i].setColorEnd(0, 1, 0, 1);
 		}
 
+		std::cout << i << " begin " << lines[i].odcinek_begin[0]<< "  " << lines[i].odcinek_begin[1] << "\n";
+		std::cout << i << " end " << lines[i].odcinek_end[0]<< "   " << lines[i].odcinek_end[1] << "\n";
 	}
 	Lines& player = lines[0];
 	player.x = -.9f;
 	player.y = -.9f;
 	player.scale = .1;
-	player.setColorBegin(1, 1, 1, 1);
-	player.setColorEnd(.5, 0, .1, 1);
+	player.setColorBegin(0, .1, 1, 1);
+	player.setColorEnd(.5, 1, .1, 1);
+	std::cout <<  " player begin " << player.odcinek_begin[0] << "  " << player.odcinek_begin[1] << "\n";
+	std::cout <<  " player end " << player.odcinek_end[0] << "   " << player.odcinek_end[1] << "\n";
 
 
+	bool test = false;
 	MyTri   trian;
 	float   tx = 0.0, ty = 0.5, cx = 0.0, cy = 0.0;
 	do {
@@ -224,11 +274,17 @@ void MyWin::MainLoop() {
 		// =====================================================        Drawing
 		//trian.draw();
 
-		for (int i=1;i<100;i++)
+		for (int i=1;i< N * N;i++)
 		{
 			lines[i].draw();
+			if (czy_przecinaja(player.odcinek_begin, player.odcinek_end, lines[i].odcinek_begin, lines[i].odcinek_end)) {
+				player.x = -.9f;
+				player.y = -.9f;
+				player.rotate = 0;
+			}
 		}
 		player.draw();
+		player.updateplayercollision();
 		//circle.draw(cx, cy);
 		AGLErrors("main-afterdraw");
 
@@ -263,6 +319,27 @@ void MyWin::MainLoop() {
 			player.rotate += 0.01;
 		}
 
+
+		float scale = sqrt(1.f / 16.f) / 3;
+
+		// collision x-axis?
+		bool collisionX = cx + scale >= tx && tx + scale >= cx;
+		// collision y-axis?
+		bool collisionY = cy + scale >= ty && ty + scale >= cy;
+		// collision only if on both axes
+
+		//if (collisionX && collisionY) {
+		//	std::cout << "colid \n";
+		//	break;
+		//}
+		//else
+		//	std::cout << "cross " << tx << " | " << ty << " circle" << cx << " " << cy << "\n";
+		if (test)
+		{
+			std::cout << "bardzo się starałeś, lecz z gry wyleciałeś";
+			break;
+			
+		}
 
 	} while (glfwGetKey(win(), GLFW_KEY_ESCAPE) != GLFW_PRESS &&
 		glfwWindowShouldClose(win()) == 0);
