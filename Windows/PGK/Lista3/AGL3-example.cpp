@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <random>
 #include <climits>
+#include <ctime>
 //#include <cmath>
 
 
@@ -64,12 +65,15 @@ public:
          out vec4 vcolor;
 		 out  vec2 vpos;
          void main(void) {
-            const vec2 vertices[3] = vec2[3](vec2( 0.9, -0.9),
+            const vec2 vertices[] = vec2[4](vec2( 0.9, -0.9),
                                              vec2(-0.9, -0.9),
-                                             vec2( 0.9,  0.9));
-            const vec4 colors[]    = vec4[3](vec4(1.0, 0.0, 0.0, 1.0),
+ vec2( -0.9,  0.9),
+                                             vec2( 0.9,  0.9)
+											);
+            const vec4 colors[]    = vec4[4](vec4(1.0, 0.0, 0.0, 1.0),
                                              vec4(0.0, 1.0, 0.0, 1.0),
-                                             vec4(0.0, 0.0, 1.0, 1.0));
+                                             vec4(0.0, 0.0, 1.0, 1.0),
+											 vec4(0.0, 0.5, 1.0, 1.0));
 
             vcolor      = colors[gl_VertexID];
 			vpos = vertices[gl_VertexID];
@@ -79,25 +83,38 @@ public:
       )END", R"END(
 
          #version 330 
-		  in  vec2 vpos;
-         in  vec4 vcolor;
-         out vec4 color;
+		precision highp float;
+		in vec2 vpos;
+		in vec4 vcolor;
+		out vec4 color;
 
-         void main(void) {
-          float r = vpos.x * vpos.x + vpos.y * vpos.y;
-           if (r < 0.01) {
-              color = vec4(1.0, 1.0, 1.0, 0);
-            }
-            else {
-              color = vcolor;
-           }
-         } 
+		float pulse(float val, float dst) {
+		  return floor(mod(val*dst,1.0)+.5);
+		}
+
+		void main()
+		{
+		  vec2 dir = vec2(0,10); // high noon
+  
+		  //vec2 cpos = vpos;
+  
+		  const float d = 5.0;
+
+		  float bright = pulse(vpos.x,d) + pulse(vpos.y,d);
+
+		  vec3 vvcolor = mod(bright,2.0) > .5 ? vec3(1,1,1) : vec3(0,0.1,0.1); 
+
+		  float diffuse = .5 + dot(vec2(1,0),dir);
+		  color = vec4(diffuse * vvcolor, 1);
+		//color=vcolor;
+		}
+
 
       )END");
 	}
-	void draw() {
+	void draw(std::clock_t clock) {
 		bindProgram();
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 3);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 	}
 };
 
@@ -201,11 +218,15 @@ public:
 // ==========================================================================
 class MyWin : public AGLWindow {
 public:
+	
+
 	MyWin() {};
 	MyWin(int _wd, int _ht, const char* name, int vers, int fullscr = 0)
 		: AGLWindow(_wd, _ht, name, vers, fullscr) {};
 	virtual void KeyCB(int key, int scancode, int action, int mods);
-	void MainLoop();
+	void MainLoop(int argc, char* argv[]);
+
+
 };
 
 
@@ -223,11 +244,33 @@ void MyWin::KeyCB(int key, int scancode, int action, int mods) {
 
 
 // ==========================================================================
-void MyWin::MainLoop() {
-	
+void MyWin::MainLoop(int argc, char* argv[]) {
+
+	std::clock_t start;
+	double duration;
+	start = std::clock();
+
 	const float PI = 3.14159265358979323846f; // Nie wiem dlaczego, ale M_PI mi nie działa
 	std::random_device rd;
-	std::mt19937 rng(rd());
+	
+	std::mt19937 rng;
+	int liczba_N = 0;
+	if (argc < 2)
+	{
+		std::mt19937 rpg(rd());
+		rng = rpg;
+	}
+	if (argc == 2)
+	{
+		std::mt19937 rpg((char)argv[1]);
+		rng = rpg;
+	}
+	else
+	{
+		std::mt19937 rpg((char)argv[1]);
+		rng = rpg;
+		liczba_N = atoi(argv[2]);
+	}
 	std::uniform_int_distribution<int> uni(0, INT_MAX);
 	ViewportOne(0, 0, wd, ht);
 	const int N = 10;
@@ -251,8 +294,8 @@ void MyWin::MainLoop() {
 			lines[i].setColorEnd(0, 1, 0, 1);
 		}
 
-		std::cout << i << " begin " << lines[i].odcinek_begin[0]<< "  " << lines[i].odcinek_begin[1] << "\n";
-		std::cout << i << " end " << lines[i].odcinek_end[0]<< "   " << lines[i].odcinek_end[1] << "\n";
+		//std::cout << i << " begin " << lines[i].odcinek_begin[0]<< "  " << lines[i].odcinek_begin[1] << "\n";
+		//std::cout << i << " end " << lines[i].odcinek_end[0]<< "   " << lines[i].odcinek_end[1] << "\n";
 	}
 	Lines& player = lines[0];
 	player.x = -.9f;
@@ -272,12 +315,17 @@ void MyWin::MainLoop() {
 
 		AGLErrors("main-loopbegin");
 		// =====================================================        Drawing
-		//trian.draw();
+		trian.draw(std::clock());
 
 		for (int i=1;i< N * N;i++)
 		{
 			lines[i].draw();
 			if (czy_przecinaja(player.odcinek_begin, player.odcinek_end, lines[i].odcinek_begin, lines[i].odcinek_end)) {
+				
+				if (i == (N * N) - 1) {
+					test = true;
+					break;
+				}	
 				player.x = -.9f;
 				player.y = -.9f;
 				player.rotate = 0;
@@ -336,18 +384,25 @@ void MyWin::MainLoop() {
 		//	std::cout << "cross " << tx << " | " << ty << " circle" << cx << " " << cy << "\n";
 		if (test)
 		{
-			std::cout << "bardzo się starałeś, lecz z gry wyleciałeś";
+			std::cout << "brawo \n";
 			break;
 			
 		}
 
 	} while (glfwGetKey(win(), GLFW_KEY_ESCAPE) != GLFW_PRESS &&
 		glfwWindowShouldClose(win()) == 0);
+	duration = (std::clock() - start) / (double)CLOCKS_PER_SEC;
+	std::cout << "Twoj czas to: " << duration << '\n';
 }
 
 int main(int argc, char* argv[]) {
 	MyWin win;
 	win.Init(800, 600, "AGL3 example", 0, 33);
-	win.MainLoop();
+	//win.sizeargs = argc;
+	//for (int i = 1; i < argc; i++)
+	//{
+	//	win.args[i] = argv[i];
+	//}
+	win.MainLoop(argc, argv);
 	return 0;
 }
