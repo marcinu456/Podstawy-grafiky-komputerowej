@@ -1,17 +1,15 @@
 ﻿  Using triplet "x86-windows" from "C:\vcpkg\installed\x86-windows\"
   AGL3-example.cpp
-D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista3\AGL3-example.cpp(265,33): warning C4302: "typ rzutowania": obcięcie z "char *" do "char"
-D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista3\AGL3-example.cpp(270,33): warning C4302: "typ rzutowania": obcięcie z "char *" do "char"
-D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista3\AGL3-example.cpp(281,24): warning C4244: "inicjowanie": konwersja z "int" do "float", możliwa utrata danych
-D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista3\AGL3-example.cpp(303,19): warning C4305: "=": obcięcie z "double" do "float"
-D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista3\AGL3-example.cpp(304,34): warning C4305: "argument": obcięcie z "double" do "float"
-D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista3\AGL3-example.cpp(305,33): warning C4305: "argument": obcięcie z "double" do "float"
-D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista3\AGL3-example.cpp(350,14): warning C4305: "+=": obcięcie z "double" do "float"
-D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista3\AGL3-example.cpp(353,14): warning C4305: "-=": obcięcie z "double" do "float"
-D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista3\AGL3-example.cpp(356,41): warning C4244: "+=": konwersja z "double" do "float", możliwa utrata danych
-D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista3\AGL3-example.cpp(357,39): warning C4244: "+=": konwersja z "double" do "float", możliwa utrata danych
-D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista3\AGL3-example.cpp(360,41): warning C4244: "-=": konwersja z "double" do "float", możliwa utrata danych
-D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista3\AGL3-example.cpp(361,41): warning C4244: "-=": konwersja z "double" do "float", możliwa utrata danych
-D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista3\AGL3-example.cpp(364,25): warning C4305: "-=": obcięcie z "double" do "float"
-D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista3\AGL3-example.cpp(367,25): warning C4305: "+=": obcięcie z "double" do "float"
+D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista3\AGL3-example.cpp(261,33): warning C4302: "typ rzutowania": obcięcie z "char *" do "char"
+D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista3\AGL3-example.cpp(266,33): warning C4302: "typ rzutowania": obcięcie z "char *" do "char"
+D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista3\AGL3-example.cpp(277,24): warning C4244: "inicjowanie": konwersja z "int" do "float", możliwa utrata danych
+D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista3\AGL3-example.cpp(299,19): warning C4305: "=": obcięcie z "double" do "float"
+D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista3\AGL3-example.cpp(346,14): warning C4305: "+=": obcięcie z "double" do "float"
+D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista3\AGL3-example.cpp(349,14): warning C4305: "-=": obcięcie z "double" do "float"
+D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista3\AGL3-example.cpp(352,41): warning C4244: "+=": konwersja z "double" do "float", możliwa utrata danych
+D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista3\AGL3-example.cpp(353,39): warning C4244: "+=": konwersja z "double" do "float", możliwa utrata danych
+D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista3\AGL3-example.cpp(356,41): warning C4244: "-=": konwersja z "double" do "float", możliwa utrata danych
+D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista3\AGL3-example.cpp(357,41): warning C4244: "-=": konwersja z "double" do "float", możliwa utrata danych
+D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista3\AGL3-example.cpp(360,25): warning C4305: "-=": obcięcie z "double" do "float"
+D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Lista3\AGL3-example.cpp(363,25): warning C4305: "+=": obcięcie z "double" do "float"
   Lista3.vcxproj -> D:\GitKraken\Podstawy grafiky komputerowej\Windows\PGK\Debug\Lista3.exe

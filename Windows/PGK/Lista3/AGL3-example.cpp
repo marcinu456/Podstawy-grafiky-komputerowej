@@ -62,20 +62,17 @@ public:
 		compileShaders(R"END(
 
          #version 330 
-         out vec4 vcolor;
+
 		 out  vec2 vpos;
          void main(void) {
             const vec2 vertices[] = vec2[4](vec2( 0.9, -0.9),
                                              vec2(-0.9, -0.9),
- vec2( -0.9,  0.9),
+											 vec2( -0.9,  0.9),
                                              vec2( 0.9,  0.9)
 											);
-            const vec4 colors[]    = vec4[4](vec4(1.0, 0.0, 0.0, 1.0),
-                                             vec4(0.0, 1.0, 0.0, 1.0),
-                                             vec4(0.0, 0.0, 1.0, 1.0),
-											 vec4(0.0, 0.5, 1.0, 1.0));
 
-            vcolor      = colors[gl_VertexID];
+
+
 			vpos = vertices[gl_VertexID];
             gl_Position = vec4(vertices[gl_VertexID], 0.5, 1.0); 
          }
@@ -85,7 +82,6 @@ public:
          #version 330 
 		precision highp float;
 		in vec2 vpos;
-		in vec4 vcolor;
 		out vec4 color;
 
 		float pulse(float val, float dst) {
@@ -94,6 +90,7 @@ public:
 
 		void main()
 		{
+
 		  vec2 dir = vec2(0,10); // high noon
   
 		  //vec2 cpos = vpos;
@@ -105,14 +102,13 @@ public:
 		  vec3 vvcolor = mod(bright,2.0) > .5 ? vec3(1,1,1) : vec3(0,0.1,0.1); 
 
 		  float diffuse = .5 + dot(vec2(1,0),dir);
-		  color = vec4(diffuse * vvcolor, 1);
-		//color=vcolor;
+		  color = vec4(diffuse * vvcolor, .5);
 		}
 
 
       )END");
 	}
-	void draw(std::clock_t clock) {
+	void draw() {
 		bindProgram();
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 	}
@@ -286,11 +282,11 @@ void MyWin::MainLoop(int argc, char* argv[]) {
 		if (i== (N * N)-1)//finish naprawic
 		{
 			lines[i].setColorBegin(1, 1, 1, 1);
-			lines[i].setColorEnd(1, 0, 0, 1);
+			lines[i].setColorEnd(.5, 0, 0, 1);
 		}
 		else
 		{
-			lines[i].setColorBegin(1, 0, 1, 1);
+			lines[i].setColorBegin(1, 1, 0, 1);
 			lines[i].setColorEnd(0, 1, 0, 1);
 		}
 
@@ -301,8 +297,8 @@ void MyWin::MainLoop(int argc, char* argv[]) {
 	player.x = -.9f;
 	player.y = -.9f;
 	player.scale = .1;
-	player.setColorBegin(0, .1, 1, 1);
-	player.setColorEnd(.5, 1, .1, 1);
+	player.setColorBegin(0, 0, 1, 1);
+	player.setColorEnd(.5, 0, .5, 1);
 	std::cout <<  " player begin " << player.odcinek_begin[0] << "  " << player.odcinek_begin[1] << "\n";
 	std::cout <<  " player end " << player.odcinek_end[0] << "   " << player.odcinek_end[1] << "\n";
 
@@ -315,7 +311,7 @@ void MyWin::MainLoop(int argc, char* argv[]) {
 
 		AGLErrors("main-loopbegin");
 		// =====================================================        Drawing
-		trian.draw(std::clock());
+		trian.draw();
 
 		for (int i=1;i< N * N;i++)
 		{
