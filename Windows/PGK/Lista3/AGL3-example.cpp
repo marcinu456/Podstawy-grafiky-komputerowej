@@ -53,9 +53,9 @@ bool czy_przecinaja(std::vector<float> A, std::vector<float> B, std::vector<floa
 // ==========================================================================
 // Drawable object: no-data only: vertex/fragment programs
 // ==========================================================================
-class MyTri : public AGLDrawable {
+class MySquare : public AGLDrawable {
 public:
-	MyTri() : AGLDrawable(0) {
+	MySquare() : AGLDrawable(0) {
 		setShaders();
 	}
 	void setShaders() {
@@ -221,7 +221,7 @@ public:
 		: AGLWindow(_wd, _ht, name, vers, fullscr) {};
 	virtual void KeyCB(int key, int scancode, int action, int mods);
 	void MainLoop(int argc, char* argv[]);
-
+	static void CallbackResize(GLFWwindow* window, int cx, int cy);
 
 };
 
@@ -237,40 +237,54 @@ void MyWin::KeyCB(int key, int scancode, int action, int mods) {
 	}
 }
 
+void MyWin::CallbackResize(GLFWwindow* window, int cx, int cy) {
+	
+		if (cx < cy){
+			int resolution = (cy - cx) / 2;
+			glViewport(0, resolution, cx, cx);
+		}
+		else{
+			int resolution = (cx - cy) / 2;
+			glViewport(resolution,0, cy, cy);
+		}
+	
+		
+}
+
 
 
 // ==========================================================================
 void MyWin::MainLoop(int argc, char* argv[]) {
-
+	ViewportOne(0, 0, wd, ht);
+	glfwSetWindowSizeCallback(win(), MyWin::CallbackResize);
 	std::clock_t start;
-	double duration;
+	long double duration;
 	start = std::clock();
 
 	const float PI = 3.14159265358979323846f; // Nie wiem dlaczego, ale M_PI mi nie działa
 	std::random_device rd;
 	
 	std::mt19937 rng;
-	int liczba_N = 0;
-	if (argc < 2)
+	int liczba_N = 10;
+	if (argc == 1)
 	{
 		std::mt19937 rpg(rd());
 		rng = rpg;
 	}
-	if (argc == 2)
+	else if (argc == 2)
 	{
-		std::mt19937 rpg((char)argv[1]);
+		std::mt19937 rpg((char)atoi(argv[1]));
 		rng = rpg;
 	}
-	else
+	else if (argc == 3)
 	{
-		std::mt19937 rpg((char)argv[1]);
+		std::mt19937 rpg((char)atoi(argv[1]));
 		rng = rpg;
-		liczba_N = atoi(argv[2]);
+		liczba_N = int(atoi(argv[2]));
 	}
 	std::uniform_int_distribution<int> uni(0, INT_MAX);
-	ViewportOne(0, 0, wd, ht);
-	const int N = 10;
-	Lines lines[N * N];
+	const int N = liczba_N;
+	Lines lines[N*N];
 	for (int i = 1; i < N * N; i++)
 	{
 
@@ -296,22 +310,22 @@ void MyWin::MainLoop(int argc, char* argv[]) {
 	Lines& player = lines[0];
 	player.x = -.9f;
 	player.y = -.9f;
-	player.scale = .1;
+	player.scale = 1.f / N;
 	player.setColorBegin(0, 0, 1, 1);
 	player.setColorEnd(.5, 0, .5, 1);
 	std::cout <<  " player begin " << player.odcinek_begin[0] << "  " << player.odcinek_begin[1] << "\n";
 	std::cout <<  " player end " << player.odcinek_end[0] << "   " << player.odcinek_end[1] << "\n";
 
 
-	bool test = false;
-	MyTri   trian;
+	bool bwin = false;
+	MySquare   square;
 	float   tx = 0.0, ty = 0.5, cx = 0.0, cy = 0.0;
 	do {
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		AGLErrors("main-loopbegin");
 		// =====================================================        Drawing
-		trian.draw();
+		square.draw();
 
 		for (int i=1;i< N * N;i++)
 		{
@@ -319,7 +333,7 @@ void MyWin::MainLoop(int argc, char* argv[]) {
 			if (czy_przecinaja(player.odcinek_begin, player.odcinek_end, lines[i].odcinek_begin, lines[i].odcinek_end)) {
 				
 				if (i == (N * N) - 1) {
-					test = true;
+					bwin = true;
 					break;
 				}	
 				player.x = -.9f;
@@ -378,7 +392,7 @@ void MyWin::MainLoop(int argc, char* argv[]) {
 		//}
 		//else
 		//	std::cout << "cross " << tx << " | " << ty << " circle" << cx << " " << cy << "\n";
-		if (test)
+		if (bwin)
 		{
 			std::cout << "brawo \n";
 			break;
@@ -387,18 +401,18 @@ void MyWin::MainLoop(int argc, char* argv[]) {
 
 	} while (glfwGetKey(win(), GLFW_KEY_ESCAPE) != GLFW_PRESS &&
 		glfwWindowShouldClose(win()) == 0);
-	duration = (std::clock() - start) / (double)CLOCKS_PER_SEC;
-	std::cout << "Twoj czas to: " << duration << '\n';
+	if (bwin)
+	{
+		duration = (std::clock() - start) / (double)CLOCKS_PER_SEC;
+		std::cout << "Twoj czas to: " << duration << '\n';
+	}
+
 }
 
 int main(int argc, char* argv[]) {
 	MyWin win;
 	win.Init(800, 600, "AGL3 example", 0, 33);
-	//win.sizeargs = argc;
-	//for (int i = 1; i < argc; i++)
-	//{
-	//	win.args[i] = argv[i];
-	//}
+
 	win.MainLoop(argc, argv);
 	return 0;
 }

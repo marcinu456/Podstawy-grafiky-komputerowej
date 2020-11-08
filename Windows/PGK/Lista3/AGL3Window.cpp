@@ -162,6 +162,9 @@ void AGLWindow::Init(int width, int height, const char* name, int fullscr, int v
     glEnable(GL_MULTISAMPLE);
 }
 
+
+
+
 void AGLWindow::CallbackResize(GLFWwindow* window, int cx, int cy) {
     void* ptr = glfwGetWindowUserPointer(window);
     if (AGLWindow* winPtr = static_cast<AGLWindow*>(ptr))
