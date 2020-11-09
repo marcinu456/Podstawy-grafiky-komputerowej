@@ -48,7 +48,65 @@ bool czy_przecinaja(std::vector<float> A, std::vector<float> B, std::vector<floa
 	return 0;
 }
 
+class Finish : public AGLDrawable {
+public:
+	Finish() : AGLDrawable(0) {
+		setShaders();
+	}
+	void setShaders() {
+		compileShaders(R"END(
 
+         #version 330 
+
+		 out  vec2 vpos;
+         void main(void) {
+            const vec2 vertices[] = vec2[4](vec2( 0.9, -0.9),
+                                             vec2(-0.9, -0.9),
+											 vec2( -0.9,  0.9),
+                                             vec2( 0.9,  0.9)
+											);
+
+
+
+			vpos = vertices[gl_VertexID];
+            gl_Position = vec4(vertices[gl_VertexID], 0.5, 1.0); 
+         }
+
+      )END", R"END(
+
+         #version 330 
+		precision highp float;
+		uniform float time;
+		in vec2 vpos;
+		out vec4 color;
+
+		void main()
+		{
+		  float theta = time*20.0;
+  
+		  vec3 dir1 = vec3(cos(theta),0,sin(theta)); 
+		  vec3 dir2 = vec3(sin(theta),0,cos(theta));
+  
+		  float diffuse1 = pow(dot(dir2,dir1),2.0);
+		  float diffuse2 = pow(dot(dir1,dir2),2.0);
+  
+		  vec3 col1 = diffuse1 * vec3(1,0,0);
+		  vec3 col2 = diffuse2 * vec3(0,0,1);
+  
+		  color = vec4(col1 + col2, 1.0);
+
+		}
+
+
+      )END");
+	}
+	void draw(float time) {
+		bindProgram();
+		bindBuffers();
+		glUniform1f(0, time);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+	}
+};
 
 // ==========================================================================
 // Drawable object: no-data only: vertex/fragment programs
@@ -283,7 +341,7 @@ void MyWin::MainLoop(int argc, char* argv[]) {
 		liczba_N = int(atoi(argv[2]));
 	}
 	std::uniform_int_distribution<int> uni(0, INT_MAX);
-	const int N = liczba_N;
+	const int N = 2;// liczba_N;
 	Lines lines[N*N];
 	for (int i = 1; i < N * N; i++)
 	{
@@ -319,14 +377,26 @@ void MyWin::MainLoop(int argc, char* argv[]) {
 
 	bool bwin = false;
 	MySquare   square;
+
+	Finish finish;
 	float   tx = 0.0, ty = 0.5, cx = 0.0, cy = 0.0;
 	do {
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		AGLErrors("main-loopbegin");
 		// =====================================================        Drawing
-		square.draw();
+		
+		if (bwin)
+		{
+			std::cout << "brawo \n";
+			finish.draw((std::clock() - start) / (double)CLOCKS_PER_SEC);
+			//break;
 
+		}
+		else
+		{
+			square.draw();
+		}
 		for (int i=1;i< N * N;i++)
 		{
 			lines[i].draw();
@@ -392,12 +462,7 @@ void MyWin::MainLoop(int argc, char* argv[]) {
 		//}
 		//else
 		//	std::cout << "cross " << tx << " | " << ty << " circle" << cx << " " << cy << "\n";
-		if (bwin)
-		{
-			std::cout << "brawo \n";
-			break;
-			
-		}
+
 
 	} while (glfwGetKey(win(), GLFW_KEY_ESCAPE) != GLFW_PRESS &&
 		glfwWindowShouldClose(win()) == 0);
@@ -411,7 +476,7 @@ void MyWin::MainLoop(int argc, char* argv[]) {
 
 int main(int argc, char* argv[]) {
 	MyWin win;
-	win.Init(800, 600, "AGL3 example", 0, 33);
+	win.Init(800, 800, "AGL3 example", 0, 33);
 
 	win.MainLoop(argc, argv);
 	return 0;
