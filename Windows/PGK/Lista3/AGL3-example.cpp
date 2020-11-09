@@ -83,7 +83,7 @@ public:
 		void main()
 		{
 		  float theta = time*20.0;
-  
+		  float r = vpos.x * vpos.x + vpos.y * vpos.y;
 		  vec3 dir1 = vec3(cos(theta),0,sin(theta)); 
 		  vec3 dir2 = vec3(sin(theta),0,cos(theta));
   
@@ -91,10 +91,21 @@ public:
 		  float diffuse2 = pow(dot(dir1,dir2),2.0);
   
 		  vec3 col1 = diffuse1 * vec3(1,0,0);
-		  vec3 col2 = diffuse2 * vec3(0,0,1);
+		  //vec3 col2 = diffuse2 * vec3(0,0,1);
   
-		  color = vec4(col1 + col2, 1.0);
-
+		 
+           if (r < cos(theta)/2) {
+              color = vec4(1.0, 1.0, 1.0, 0);
+            }
+           else if (r < sin(theta)+.5) {
+              color = vec4(1.0, 0.0, 1.0, 0);
+            }
+           else if (r < tan(theta)+.5) {
+              color = vec4(0.5, 1.0, 0.1, 0);
+            }
+            else {
+               color = vec4(col1, 1.0);
+           }
 		}
 
 
@@ -341,7 +352,7 @@ void MyWin::MainLoop(int argc, char* argv[]) {
 		liczba_N = int(atoi(argv[2]));
 	}
 	std::uniform_int_distribution<int> uni(0, INT_MAX);
-	const int N = 2;// liczba_N;
+	const int N = liczba_N;
 	Lines lines[N*N];
 	for (int i = 1; i < N * N; i++)
 	{
@@ -376,21 +387,41 @@ void MyWin::MainLoop(int argc, char* argv[]) {
 
 
 	bool bwin = false;
+	bool btimr = true;
 	MySquare   square;
 
 	Finish finish;
 	float   tx = 0.0, ty = 0.5, cx = 0.0, cy = 0.0;
+
+
+	static double limitFPS = 1.0 / 60.0;
+
+	double lastTime = glfwGetTime(), timer = lastTime;
+	double deltaTime = 0, nowTime = 0;
+	int frames = 0, updates = 0;
+
+
 	do {
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		AGLErrors("main-loopbegin");
 		// =====================================================        Drawing
 		
+		nowTime = glfwGetTime();
+		deltaTime += (nowTime - lastTime) / limitFPS;
+		lastTime = nowTime;
+
+		while (deltaTime >= 1.0) {
+
 		if (bwin)
 		{
-			std::cout << "brawo \n";
-			finish.draw((std::clock() - start) / (double)CLOCKS_PER_SEC);
+			finish.draw(((std::clock() - start) / (double)CLOCKS_PER_SEC)/50);
 			//break;
+			if (btimr)
+			{
+				duration = (std::clock() - start) / (double)CLOCKS_PER_SEC;
+				btimr = false;
+			}
 
 		}
 		else
@@ -426,24 +457,24 @@ void MyWin::MainLoop(int argc, char* argv[]) {
 		else if (glfwGetKey(win(), GLFW_KEY_UP) == GLFW_PRESS) {
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		}
-		else if (glfwGetKey(win(), GLFW_KEY_RIGHT) == GLFW_PRESS) {
+		else if (glfwGetKey(win(), GLFW_KEY_RIGHT) == GLFW_PRESS && !bwin) {
 			tx += 0.01;
 		}
-		else if (glfwGetKey(win(), GLFW_KEY_LEFT) == GLFW_PRESS) {
+		else if (glfwGetKey(win(), GLFW_KEY_LEFT) == GLFW_PRESS && !bwin) {
 			tx -= 0.01;
 		}
-		else if (glfwGetKey(win(), GLFW_KEY_W) == GLFW_PRESS) { //Start Circle moving
+		else if (glfwGetKey(win(), GLFW_KEY_W) == GLFW_PRESS && !bwin) { //Start Circle moving
 			player.x += 0.01 * cos(player.rotate);
 			player.y += 0.01*sin(player.rotate);
 		}
-		else if (glfwGetKey(win(), GLFW_KEY_S) == GLFW_PRESS) {
+		else if (glfwGetKey(win(), GLFW_KEY_S) == GLFW_PRESS && !bwin) {
 			player.x -= 0.01 * cos(player.rotate);
 			player.y -= 0.01 * sin(player.rotate);
 		}
-		if (glfwGetKey(win(), GLFW_KEY_D) == GLFW_PRESS) {
+		if (glfwGetKey(win(), GLFW_KEY_D) == GLFW_PRESS && !bwin) {
 			player.rotate -= 0.01;
 		}
-		if (glfwGetKey(win(), GLFW_KEY_A) == GLFW_PRESS) {
+		if (glfwGetKey(win(), GLFW_KEY_A) == GLFW_PRESS && !bwin) {
 			player.rotate += 0.01;
 		}
 
@@ -462,13 +493,20 @@ void MyWin::MainLoop(int argc, char* argv[]) {
 		//}
 		//else
 		//	std::cout << "cross " << tx << " | " << ty << " circle" << cx << " " << cy << "\n";
-
-
+		updates++;
+		deltaTime--;
+		}
+		frames++;
+		if (glfwGetTime() - timer > 1.0) {
+			timer++;
+			std::cout << "FPS: " << frames << " Updates:" << updates << std::endl;
+			updates = 0, frames = 0;
+		}
 	} while (glfwGetKey(win(), GLFW_KEY_ESCAPE) != GLFW_PRESS &&
 		glfwWindowShouldClose(win()) == 0);
 	if (bwin)
 	{
-		duration = (std::clock() - start) / (double)CLOCKS_PER_SEC;
+		
 		std::cout << "Twoj czas to: " << duration << '\n';
 	}
 
