@@ -22,13 +22,13 @@ public:
     void setShaders();
     void setBuffers();
     void draw(glm::mat4& MVP);
-    void setColor(float r, float g, float b);
+
  private:
     static std::vector<GLfloat> generateMesh(int N);
     
     const std::vector<GLfloat> g_vertex_buffer_data;
     const GLfloat* g_color_buffer_data;
-    GLfloat cross_color[3] = { 0.0, 1.0, 0.0 };
+
 };
 
 #endif

@@ -10,7 +10,7 @@ Sphere::Sphere(int N):
     pos(0,0,0),
     scale(1,1,1)
 {
-    GLfloat cross_color[3] = { 0.0, 1.0, 0.0 };
+
     setShaders();
     setBuffers();
 }
@@ -90,10 +90,10 @@ void Sphere::setShaders() {
 
         in vec3 vpos;
 
-        out vec3 color;
+        out vec4 color;
 
         void main(){
-            color = vec3(1, 0, 0);
+            color = vec4(1, 0.25, 0,0.25);
 
         }
     )END");
@@ -126,8 +126,4 @@ void Sphere::draw(glm::mat4& MVP) {
     glUniform4f(1, scale[0],scale[1],scale[2],1);
     glUniformMatrix4fv(2, 1, GL_FALSE, &MVP[0][0]);
     glDrawArrays(GL_TRIANGLES, 0, g_vertex_buffer_data.size()); // 12*3 indices starting at 0 -> 12 triangles
-}
-
-void Sphere::setColor(float r, float g, float b){
-    cross_color[0]=r;cross_color[1]=g;cross_color[2]=b;
 }

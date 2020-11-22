@@ -8,7 +8,6 @@
 
 #include "AGL3Window.hpp"
 #include "AGL3Drawable.hpp"
-#include "Misc.hpp"
 #include "Shapes.hpp"
 
 #include "controls.hpp"
@@ -27,7 +26,7 @@ public:
     virtual void KeyCB(int key, int scancode, int action, int mods);
     void setup();
     static void reshape(GLFWwindow * a, int b,int c);
-    void MainLoop(long int grid_size);
+    void MainLoop(long int grid_size, bool is_seed, int SEED);
     static void CallbackResize(GLFWwindow* window, int cx, int cy);
 };
 
@@ -68,7 +67,7 @@ void MyWin::setup(){
 
     glfwSetInputMode(win(), GLFW_STICKY_KEYS, GL_TRUE);
 
-	glClearColor(0.4f, 0.0f, 0.0f, 0.0f);
+	glClearColor(0.0f, 0.0f, 0.1f, 0.0f);
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS); 
@@ -92,7 +91,7 @@ void MyWin::CallbackResize(GLFWwindow* window, int cx, int cy) {
 
 
 
-void MyWin::MainLoop(long int grid_size) {
+void MyWin::MainLoop(long int grid_size,bool is_seed,int SEED) {
 
 
     
@@ -109,7 +108,7 @@ void MyWin::MainLoop(long int grid_size) {
 
 
     Cube cube;
-    TriangleInstances obsticles(grid_size);
+    Triangle obsticles(grid_size,is_seed,SEED);
 
     Sphere player(15);
     player.scale[0] = 0.5 / grid_size;
@@ -127,6 +126,8 @@ void MyWin::MainLoop(long int grid_size) {
     int xsize, ysize;
 	glfwGetWindowSize(win(), &xsize, &ysize);
     //glMatrixMode(ProjectionMatrix);
+
+
     do {
         glfwGetWindowSize(win(), &xsize, &ysize);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -199,61 +200,33 @@ void MyWin::MainLoop(long int grid_size) {
 
 int main(int argc, char *argv[]) {
 
+    bool is_seed = false;
+    int SEED = 10;
 
-    long int SEED = 10;
-    if(argc > 1){ 
-        std::istringstream ss(argv[1]);
-        if (!(ss >> SEED) || !ss.eof()) {
-            SEED = std::strtol(argv[1], nullptr, 32);
-            Misc::rand::setSeed(SEED);
-        }
-        else Misc::rand::setSeed(SEED);
-    }
-    std::cout << "Current seed: " << SEED << "\n";
-
-    // convert arguntent for grid_size
-    int grid_size = 10;
-    if(argc > 2){ 
-        std::istringstream ss(argv[2]);
-        if (!(ss >> grid_size)) {
-            std::cerr << "Invalid number: " << argv[2] << '\n';
-        } else if (!ss.eof()) {
-            std::cerr << "Trailing characters after number: " << argv[2] << '\n';
-        }
-    }
-
-
-    std::random_device rd;
-    std::mt19937 rng;
     int N_size = 10;
-    if (argc == 1)
+    if (argc == 2)
     {
-        std::mt19937 rpg(rd());
-        rng = rpg;
-    }
-    else if (argc == 2)
-    {
-        std::mt19937 rpg((char)atoi(argv[1]));
-        rng = rpg;
+        SEED = int(atoi(argv[1]));
+        is_seed = true;
     }
     else if (argc == 3)
     {
-        std::mt19937 rpg((char)atoi(argv[1]));
-        rng = rpg;
+        SEED = int(atoi(argv[1]));
         N_size = int(atoi(argv[2]));
+        is_seed = true;
     }
 
     std::cout << "Current seed: " << SEED << "\n";
+    std::cout << "Current N: " << N_size << "\n";
 
     MyWin win;
     win.Init(800,800,"Labirynt 3D",0,33);
 
     time_t start = time(0);
 
-    win.MainLoop(grid_size);
+    win.MainLoop(N_size, is_seed,SEED);
 
-    int seconds_since_start = difftime( time(0), start);
-    std::cout << "Time played: " << seconds_since_start << "[s]\n";
+    std::cout << "Time played: " << difftime(time(0), start) << "s\n";
 
     return 0;
 }

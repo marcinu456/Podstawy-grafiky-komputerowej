@@ -24,20 +24,18 @@
     <ClInclude Include="Main\AGL3Window.hpp" />
     <ClInclude Include="Main\controls.hpp" />
     <ClInclude Include="Main\Cube.hpp" />
-    <ClInclude Include="Main\Misc.hpp" />
     <ClInclude Include="Main\Shapes.hpp" />
     <ClInclude Include="Main\Sphere.hpp" />
-    <ClInclude Include="Main\TriangleInstances.hpp" />
+    <ClInclude Include="Main\Triangle.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main\AGL3Window.cpp" />
     <ClCompile Include="Main\controls.cpp" />
     <ClCompile Include="Main\main.cpp" />
     <ClCompile Include="Main\Cube.cpp" />
-    <ClCompile Include="Main\Misc.cpp" />
     <ClCompile Include="Main\Shapes.cpp" />
     <ClCompile Include="Main\Sphere.cpp" />
-    <ClCompile Include="Main\TriangleInstances.cpp" />
+    <ClCompile Include="Main\Triangle.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
