@@ -90,10 +90,10 @@ void Sphere::setShaders() {
 
         in vec3 vpos;
 
-        out vec4 color;
+        out vec3 color;
 
         void main(){
-            color = vec4(1, 0.25, 0,0.25);
+            color = vec3(1, 0.25, 0);
 
         }
     )END");

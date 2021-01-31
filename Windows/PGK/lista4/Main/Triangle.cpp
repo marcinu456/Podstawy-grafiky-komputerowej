@@ -54,9 +54,9 @@ void Triangle::setShaders() {
         #extension GL_ARB_shading_language_420pack : require
 
         layout(location = 0) in vec3 vertexPosition_modelspace;
-        layout(location = 1) in vec3 offsetPos;
-        layout(location = 2) in vec3 offsetScale;
-        layout(location = 3) in vec3 offsetRotation;
+        layout(location = 1) in vec3 setPos;
+        layout(location = 2) in vec3 setScale;
+        layout(location = 3) in vec3 setRotation;
 
         layout(location = 0)uniform mat4 MVP;
 
@@ -68,15 +68,15 @@ void Triangle::setShaders() {
             mat3 rot_x = {{1,0,0},
                         {0,cos(time),-sin(time)},
                         {0,sin(time),cos(time)}};
-            mat3 rot_y = {{cos(offsetRotation[1]),0,sin(offsetRotation[1])},
+            mat3 rot_y = {{cos(setRotation[1]),0,sin(setRotation[1])},
                         {0,1,0},
-                        {-sin(offsetRotation[1]),0,cos(offsetRotation[1])}};
-            mat3 rot_z = {{cos(offsetRotation[2]),-sin(offsetRotation[2]),0},
-                          {sin(offsetRotation[2]), cos(offsetRotation[2]) ,0},
+                        {-sin(setRotation[1]),0,cos(setRotation[1])}};
+            mat3 rot_z = {{cos(setRotation[2]),-sin(setRotation[2]),0},
+                          {sin(setRotation[2]), cos(setRotation[2]) ,0},
                           {0,0,1}};
 
-            gl_Position =  MVP * (vec4(rot_z * (rot_y * (rot_x * vertexPosition_modelspace)),1) * vec4(offsetScale, 1) + vec4(offsetPos,0));
-            vpos = offsetPos;
+            gl_Position =  MVP * (vec4(rot_z * (rot_y * (rot_x * vertexPosition_modelspace)),1) * vec4(setScale, 1) + vec4(setPos,0));
+            vpos = setPos;
         }
     )END", R"END(
 
@@ -170,7 +170,7 @@ void Triangle::draw(glm::mat4& MVP, double time) {
     bindBuffers();
     glUniformMatrix4fv(0, 1, GL_FALSE, &MVP[0][0]);
     glUniform1f(5, time);
-    glDrawArraysInstanced(GL_TRIANGLES, 0, 3, sizeInstances); // 12*3 indices starting at 0 -> 12 triangles
+    glDrawArraysInstanced(GL_TRIANGLES, 0, 3, sizeInstances);
     if (enableCulling) {
         glEnable(GL_CULL_FACE);
     }

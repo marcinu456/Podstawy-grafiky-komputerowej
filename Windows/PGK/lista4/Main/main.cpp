@@ -143,6 +143,8 @@ void MyWin::MainLoop(long int grid_size,bool is_seed,int SEED) {
         
         glViewport(0, 0, xsize, ysize);
         glScissor(0, 0, xsize, ysize);
+        //glViewport(0, 0, xsize / 2, ysize);
+        //glScissor(0, 0, xsize / 2, ysize);
         // =====================================================        Drawing
         player.draw(MVP);
         cube.draw(MVP);
@@ -157,8 +159,10 @@ void MyWin::MainLoop(long int grid_size,bool is_seed,int SEED) {
 
 
         glClear(GL_DEPTH_BUFFER_BIT); 
-        glViewport(xsize - ysize/3, 0, ysize/3, ysize/3);
-        glScissor( xsize - ysize/3, 0, ysize/3, ysize/3);
+        glViewport(xsize - ysize, 0, ysize/3, ysize/3);
+        glScissor( xsize - ysize, 0, ysize/3, ysize/3);
+        //glViewport(xsize / 2, ysize / 3, ysize / 2, ysize / 2);
+        //glScissor(xsize / 2, 0, ysize / 3, ysize / 3);
         // =====================================================        Drawing
         cube.draw(MVP);
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -181,16 +185,7 @@ void MyWin::MainLoop(long int grid_size,bool is_seed,int SEED) {
         if(abs(player.pos[0]) + player.scale[0] > 1) player.pos[0] = (player.pos[0] > 0 ? 1 - player.scale[0] : -1 + player.scale[0]);
         if(abs(player.pos[1]) + player.scale[1] > 1) player.pos[1] = (player.pos[1] > 0 ? 1 - player.scale[1] : -1 + player.scale[1]);
         if(abs(player.pos[2]) + player.scale[2] > 1) player.pos[2] = (player.pos[2] > 0 ? 1 - player.scale[2] : -1 + player.scale[2]);
-        //for(size_t i = 0; i < obsticles.sizeInstances; i++){
-        //    if( pow(obsticles.pos[i][0] - player.pos[0],2) + pow(obsticles.pos[i][1] - player.pos[1],2) + pow(obsticles.pos[i][2] - player.pos[2],2)
-        //        <
-        //        pow(player.scale[0],2) + pow(player.scale[1],2) + pow(player.scale[2],2)
-        //    ){
-        //        player.pos[0] = (player.pos[0] > obsticles.pos[i][0] ? obsticles.pos[i][0] + player.scale[0] : obsticles.pos[i][0] - player.scale[0]);
-        //        player.pos[1] = (player.pos[1] > obsticles.pos[i][1] ? obsticles.pos[i][1] + player.scale[1] : obsticles.pos[i][1] - player.scale[1]);
-        //        player.pos[2] = (player.pos[2] > obsticles.pos[i][2] ? obsticles.pos[i][2] + player.scale[2] : obsticles.pos[i][2] - player.scale[2]);
-        //    }
-        //}
+
 
     } // end of do
         while( glfwWindowShouldClose(win()) == 0 || camera.active);
@@ -203,7 +198,7 @@ int main(int argc, char *argv[]) {
     bool is_seed = false;
     int SEED = 10;
 
-    int N_size = 10;
+    int N_size = 3;
     if (argc == 2)
     {
         SEED = int(atoi(argv[1]));
