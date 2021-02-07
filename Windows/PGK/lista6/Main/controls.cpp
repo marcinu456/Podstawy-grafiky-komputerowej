@@ -29,19 +29,19 @@ Controls::Controls(GLFWwindow* window) :
 }
 
 void Controls::setCoord(float NS, float EW) {
-	this->horizontalAngle = 3.141593 + 3.141593 * (EW / 180.0);
-	this->verticalAngle = -3.141593 * (NS / 180.0);
+	horizontalAngle = 3.141593 + 3.141593 * (EW / 180.0);
+	verticalAngle = -3.141593 * (NS / 180.0);
 }
 
 float Controls::getTime() {
-	return this->dt;
+	return dt;
 }
 
 glm::mat4 Controls::getViewMatrix() {
-	return this->ViewMatrix;
+	return ViewMatrix;
 }
 glm::mat4 Controls::getProjectionMatrix() {
-	return this->ProjectionMatrix;
+	return ProjectionMatrix;
 }
 
 
@@ -53,7 +53,7 @@ void Controls::computeMatricesFromInputs(glm::vec3& objectPos) {
 	// Compute time difference between current and last frame
 	double currentTime = glfwGetTime();
 	float deltaTime = float(currentTime - lastTime);
-	this->dt = deltaTime;
+	dt = deltaTime;
 
 	// Get mouse position
 	double xpos, ypos;
@@ -100,14 +100,29 @@ void Controls::computeMatricesFromInputs(glm::vec3& objectPos) {
 			active = 0;
 			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		}
+
+		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
+			float zoom = mouseSpeed * float(ysize / 2 - ypos);
+			if (radius <= 1.11) {
+				radius = 1.11;
+			}
+			else if (zoom > 0) {
+				radius = ((radius - 1.0) * (1 + abs(zoom))) + 1.0;
+			}
+			else if (zoom < 0) {
+				radius = ((radius - 1.0) / (1 + abs(zoom))) + 1.0;
+			}
+
+		}
+
 	}
 	else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
 		active = 1;
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	}
-	this->position = objectPos - glm::vec3((this->radius * cosf(verticalAngle) * sin(horizontalAngle)),
-		(this->radius * sinf(verticalAngle)),
-		(this->radius * cosf(verticalAngle) * cos(horizontalAngle)));
+	position = objectPos - glm::vec3((radius * cosf(verticalAngle) * sin(horizontalAngle)),
+		(radius * sinf(verticalAngle)),
+		(radius * cosf(verticalAngle) * cos(horizontalAngle)));
 
 	float FoV = initialFoV;// - 5 * glfwGetMouseWheel(); // Now GLFW 3 requires setting up a callback for this. It's a bit too complicated for this beginner's tutorial, so it's disabled instead.
 	//0.182327     -0.528131       0.829358 

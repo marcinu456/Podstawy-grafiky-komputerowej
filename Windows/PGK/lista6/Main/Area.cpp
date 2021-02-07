@@ -1,14 +1,14 @@
 #include "Area.hpp"
 
 Area::Area() :
-    g_vertex_buffer_data(generateMesh(0, 0, 3)),
+    g_vertex_buffer_data(generateMesh(0, 0, 3,500)),
     pos(0, 0, 0),
     scale(1, 1, 1),
     loadBuff(false)
 {
     setShaders();
     setBuffers();
-
+    thread = std::thread(&Area::threadLoop, this);
     std::vector<unsigned int> index_buffer;
     index_buffer.reserve(6 * 149 * 149);
     for (int i = 0; i < 149; i++) {
@@ -30,11 +30,52 @@ Area::Area() :
 }
 
 Area::~Area() {
+    static std::unique_lock<std::mutex> lc(endThread_mux, std::defer_lock);
+    lc.lock();
+    endThread = true;
+
+    lc.unlock();
+    thread.join();
 }
 
-void Area::refresh(glm::vec3 camPos) {
+void Area::threadLoop() {
+    static std::unique_lock<std::mutex> lc_cam(curCamPos_mux, std::defer_lock);
+    static std::unique_lock<std::mutex> lc_buff(loadBuff_mux, std::defer_lock);
+
+    std::vector<GLfloat> vert;
 
 
+    glm::vec3 camPos(0, 0, 3);
+    glm::vec3 lastCamPos(0, 0, 3);
+    int test;
+
+    while (!endThread) {
+        std::this_thread::sleep_for(std::chrono::microseconds(1));
+
+        lc_cam.lock();
+        camPos = curCamPos;
+        test = curvar;
+        lc_cam.unlock();
+
+        float radius = glm::length(camPos);
+        float verRad = std::asin(camPos.y / radius);
+        float horRad = std::asin(camPos.x / (radius * cosf(verRad)));
+
+        vert = generateMesh(verRad, horRad, radius, test);
+        
+        lc_buff.lock();
+        g_vertex_buffer_data = vert;
+        loadBuff = true;
+        lc_buff.unlock();
+    }
+}
+
+
+
+
+void Area::refresh(glm::vec3 camPos, int _var) {
+
+    /*
     float radius = glm::length(camPos);
    
     float verRad = std::asin(camPos.y / radius);
@@ -42,23 +83,36 @@ void Area::refresh(glm::vec3 camPos) {
 
     //if (camPos.z < 0) horRad = M_PI - horRad;
 
-    this->g_vertex_buffer_data = generateMesh(verRad, horRad, radius);
+    g_vertex_buffer_data = generateMesh(verRad, horRad, radius);
     setBuffers();
+    */
+    static std::unique_lock<std::mutex> lc_cam(curCamPos_mux, std::defer_lock);
+    static std::unique_lock<std::mutex> lc_buff(loadBuff_mux, std::defer_lock);
 
-
+    lc_cam.lock();
+    curCamPos = camPos;
+    curvar = _var;
+    lc_cam.unlock();
+    lc_buff.lock();
+    if (loadBuff) {
+        setBuffers();
+        loadBuff = false;
+    }
+    lc_buff.unlock();
 }
 
-std::vector<GLfloat> Area::generateMesh(float verRad, float horRad, float _radius) {
+
+std::vector<GLfloat> Area::generateMesh(float verRad, float horRad, float _radius,int _var) {
     static FileLoader fl;
     const int fRes = 1201;
 
     int horIter = 150;
     int verIter = 150;
-    int stepInedx = 250 * (_radius -1);
-
+    int stepInedx = _var * (_radius -1);
+    
     int16_t height;
 
-    float radius;
+    long double radius;
 
     std::vector<GLfloat> vertices;
 
@@ -69,7 +123,7 @@ std::vector<GLfloat> Area::generateMesh(float verRad, float horRad, float _radiu
     int startStack = floor(verRad / step) - (verIter / 2*stepInedx);
     int startSector = floor(horRad / step) - (horIter / 2*stepInedx);
 
-    const GLfloat heightScale = 1.0 / 6371000.0;
+    const long double heightScale = 1.0 / 6371000.0;
     for (int i = 0; i < verIter; i++) {
         int stack = startStack + i * stepInedx;
         GLfloat stackAngle = step * stack;

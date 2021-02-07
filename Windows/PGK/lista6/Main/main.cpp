@@ -5,7 +5,7 @@
 #include <cstdio>
 #include <ctime>
 #include <chrono>
-
+#include <thread>
 
 #include "AGL3Window.hpp"
 #include "AGL3Drawable.hpp"
@@ -67,7 +67,8 @@ void MyWin::setup() {
 void MyWin::MainLoop() {
 
     this->setup();
-    float refrsh = 1;
+    bool refrsh = 1;
+    bool test = true;
     Controls camera(win());
     camera.radius = 1.12;
     camera.speed = 5.0f;
@@ -107,7 +108,8 @@ void MyWin::MainLoop() {
         AGLErrors("main-loopbegin");
 
 
-        if (refrsh ==1) {
+        if (glfwGetMouseButton(win(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
+            if(refrsh == 1)
             area.refresh(camera.position);
         }
 
@@ -141,21 +143,36 @@ void MyWin::MainLoop() {
         }
         if (glfwGetKey(win(), GLFW_KEY_1) == GLFW_PRESS) {
             camera.radius = 2.5;
+            area.refresh(camera.position);
         }
         if (glfwGetKey(win(), GLFW_KEY_2) == GLFW_PRESS) {
             camera.radius = 2;
+            area.refresh(camera.position);
         }
         if (glfwGetKey(win(), GLFW_KEY_3) == GLFW_PRESS) {
             camera.radius = 1.5;
+            area.refresh(camera.position);
         }
         if (glfwGetKey(win(), GLFW_KEY_4) == GLFW_PRESS) {
             camera.radius = 1.25;
+            area.refresh(camera.position);
         }
         if (glfwGetKey(win(), GLFW_KEY_5) == GLFW_PRESS) {
             camera.radius = 1.15;
+            area.refresh(camera.position);
         }
         if (glfwGetKey(win(), GLFW_KEY_6) == GLFW_PRESS) {
             camera.radius = 1.12;
+            std::cout << camera.radius << "cameta\n";
+            std::cout << glm::length(camera.position) << "pos\n";
+            area.refresh(camera.position);
+        }
+        if (glfwGetKey(win(), GLFW_KEY_7) == GLFW_PRESS) {
+            float cor = camera.radius*1;
+            camera.radius = 1.12;
+            std::cout << camera.radius << "cameta\n";
+            std::cout << glm::length(camera.position) << "pos\n";
+            area.refresh(camera.position,2000);
         }
         if (glfwGetKey(win(), GLFW_KEY_R) == GLFW_PRESS) {
                 refrsh = 1;

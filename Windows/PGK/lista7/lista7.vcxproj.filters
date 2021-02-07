@@ -42,4 +42,12 @@
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\yellow\shader.fs" />
+    <None Include="shaders\yellow\shader.vs" />
+    <None Include="shaders\perlin\shader.vs" />
+    <None Include="shaders\perlin\shader.fs" />
+    <None Include="shaders\mesh\shader.vs" />
+    <None Include="shaders\mesh\shader.fs" />
+  </ItemGroup>
 </Project>

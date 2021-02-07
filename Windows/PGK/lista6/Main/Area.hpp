@@ -5,11 +5,9 @@
 #include "AGL3Drawable.hpp"
 
 #include <glm/glm.hpp>
-
 #include <thread>
 #include <mutex>
 #include <future>
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
@@ -30,9 +28,9 @@ public:
     void setShaders();
     void setBuffers();
     void draw(glm::mat4& MVP, glm::vec3& light);
-    void refresh(glm::vec3 campos);
+    void refresh(glm::vec3 campos, int _var = 500);
 private:
-    static std::vector<GLfloat> generateMesh(float verticalDeg, float horizontalDeg, float radius);
+    static std::vector<GLfloat> generateMesh(float verticalDeg, float horizontalDeg, float radius, int _var);
     bool loadBuff;
 
     std::vector<GLfloat> g_vertex_buffer_data;
@@ -40,6 +38,17 @@ private:
     GLfloat cross_color[3] = { 0.0, 1.0, 0.0 };
 
     GLuint elementbuffer;
+
+
+    std::thread thread;
+    void threadLoop();
+    bool endThread = false;
+    std::mutex endThread_mux;
+    glm::vec3 curCamPos;
+    std::mutex curCamPos_mux;
+    std::mutex loadBuff_mux;
+    int curvar;
+
 };
 
 #endif

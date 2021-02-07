@@ -33,7 +33,6 @@ public:
     void setCoord(float NS, float EW);
 
 
-
 };
 
 

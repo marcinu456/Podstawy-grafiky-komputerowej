@@ -151,6 +151,14 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\mesh\shader.fs" />
+    <None Include="shaders\mesh\shader.vs" />
+    <None Include="shaders\perlin\shader.fs" />
+    <None Include="shaders\perlin\shader.vs" />
+    <None Include="shaders\yellow\shader.fs" />
+    <None Include="shaders\yellow\shader.vs" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
